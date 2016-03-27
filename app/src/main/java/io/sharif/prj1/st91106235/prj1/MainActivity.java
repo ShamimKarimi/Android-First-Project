@@ -4,6 +4,10 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
+import android.widget.ImageView;
 
 public class MainActivity extends Activity {
 
@@ -12,6 +16,13 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        ImageView golangImageView = (ImageView) findViewById(R.id.golang_image_view);
+        RotateAnimation rotateAnimation = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        rotateAnimation.setInterpolator(new LinearInterpolator());
+        rotateAnimation.setRepeatCount(Animation.INFINITE);
+        rotateAnimation.setDuration(2000);
+        golangImageView.startAnimation(rotateAnimation);
 
     }
 
