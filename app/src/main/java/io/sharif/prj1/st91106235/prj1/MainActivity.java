@@ -4,12 +4,21 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
+import android.view.animation.TranslateAnimation;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 public class MainActivity extends Activity {
+
+    ImageButton upButton, downButton, leftButton, rightButton;
+    ImageView golangPlayer;
+
+    static float STEP = 50;
 
 
     @Override
@@ -18,11 +27,17 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
 
         ImageView golangImageView = (ImageView) findViewById(R.id.golang_image_view);
-        RotateAnimation rotateAnimation = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        rotateAnimation.setInterpolator(new LinearInterpolator());
-        rotateAnimation.setRepeatCount(Animation.INFINITE);
-        rotateAnimation.setDuration(2000);
-        golangImageView.startAnimation(rotateAnimation);
+        setRotateAnimation(golangImageView);
+
+        upButton = (ImageButton) findViewById(R.id.up_button);
+        downButton = (ImageButton) findViewById(R.id.down_button);
+        rightButton = (ImageButton) findViewById(R.id.right_button);
+        leftButton = (ImageButton) findViewById(R.id.left_button);
+
+        golangPlayer = (ImageView) findViewById(R.id.golang_player);
+
+        setArrowFunctions();
+
 
     }
 
@@ -47,5 +62,56 @@ public class MainActivity extends Activity {
     void showDialog() {
         CustomDialog customDialog = new CustomDialog();
         customDialog.show(getFragmentManager(), "dialog");
+    }
+
+
+    void setRotateAnimation(View view) {
+        RotateAnimation rotateAnimation = new RotateAnimation(0.0f, 360.0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        rotateAnimation.setInterpolator(new LinearInterpolator());
+        rotateAnimation.setRepeatCount(Animation.INFINITE);
+        rotateAnimation.setDuration(2000);
+        view.startAnimation(rotateAnimation);
+    }
+
+    void setArrowFunctions() {
+
+        upButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if (golangPlayer.getAnimation() != null
+                        && !golangPlayer.getAnimation().hasEnded()) {
+                    return;
+                }
+
+                TranslateAnimation animation = new TranslateAnimation(0, 0, 0, STEP);
+                animation.setDuration(1000);
+                animation.setFillAfter(true);
+
+                animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+                    }
+
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        golangPlayer.clearAnimation();
+                        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) golangPlayer.getLayoutParams();
+                        params.topMargin += STEP;
+                        golangPlayer.setLayoutParams(params);
+                    }
+                });
+
+                golangPlayer.startAnimation(animation);
+            }
+        });
+
+
     }
 }

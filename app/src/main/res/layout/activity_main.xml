@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="2">
 
         <ImageView
             android:id="@+id/golang_image_view"
@@ -21,13 +21,76 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2">
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_weight="4"
+        android:background="@drawable/game_board_background_shape">
+
+        <ImageView
+            android:id="@+id/golang_player"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"
+            android:src="@drawable/golang_logo_small" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="10dp"
+        android:layout_weight="2"
+        android:background="@drawable/game_controls_background_shape">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center">
+
+            <ImageButton
+                android:id="@+id/left_button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="@drawable/arrow" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageButton
+                    android:id="@+id/up_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/arrow"
+                    android:rotation="90" />
+
+                <ImageButton
+                    android:id="@+id/down_button"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/arrow"
+                    android:rotation="270" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/right_button"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:background="@drawable/arrow"
+                android:rotation="180" />
 
 
-    </LinearLayout>
+        </LinearLayout>
+
+    </FrameLayout>
 
 
 </LinearLayout>
