@@ -18,7 +18,7 @@ public class MainActivity extends Activity {
     ImageButton upButton, downButton, leftButton, rightButton;
     ImageView golangPlayer;
 
-    static float STEP = 50;
+    static int STEP = 50;
 
 
     @Override
@@ -74,44 +74,55 @@ public class MainActivity extends Activity {
     }
 
     void setArrowFunctions() {
+        upButton.setOnClickListener(new ArrowButtonsOnClickListener(0, -STEP));
+        downButton.setOnClickListener(new ArrowButtonsOnClickListener(0, STEP));
+        leftButton.setOnClickListener(new ArrowButtonsOnClickListener(-STEP, 0));
+        rightButton.setOnClickListener(new ArrowButtonsOnClickListener(STEP, 0));
+    }
 
-        upButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    class ArrowButtonsOnClickListener implements View.OnClickListener {
 
-                if (golangPlayer.getAnimation() != null
-                        && !golangPlayer.getAnimation().hasEnded()) {
-                    return;
+        int left, top;
+
+        public ArrowButtonsOnClickListener(int left, int top) {
+            this.left = left;
+            this.top = top;
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (golangPlayer.getAnimation() != null
+                    && !golangPlayer.getAnimation().hasEnded()) {
+                return;
+            }
+
+            TranslateAnimation animation = new TranslateAnimation(0, left, 0, top);
+            animation.setDuration(500);
+            animation.setFillAfter(true);
+
+            animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+
+
+                @Override
+                public void onAnimationStart(Animation animation) {
                 }
 
-                TranslateAnimation animation = new TranslateAnimation(0, 0, 0, STEP);
-                animation.setDuration(1000);
-                animation.setFillAfter(true);
+                @Override
+                public void onAnimationRepeat(Animation animation) {
+                }
 
-                animation.setAnimationListener(new TranslateAnimation.AnimationListener() {
+                @Override
+                public void onAnimationEnd(Animation animation) {
+                    golangPlayer.clearAnimation();
+                    FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) golangPlayer.getLayoutParams();
+                    params.leftMargin += left;
+                    params.topMargin += top;
+                    golangPlayer.setLayoutParams(params);
+                }
+            });
 
-
-                    @Override
-                    public void onAnimationStart(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationRepeat(Animation animation) {
-                    }
-
-                    @Override
-                    public void onAnimationEnd(Animation animation) {
-                        golangPlayer.clearAnimation();
-                        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) golangPlayer.getLayoutParams();
-                        params.topMargin += STEP;
-                        golangPlayer.setLayoutParams(params);
-                    }
-                });
-
-                golangPlayer.startAnimation(animation);
-            }
-        });
-
-
+            golangPlayer.startAnimation(animation);
+        }
     }
+
 }
