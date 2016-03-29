@@ -1,6 +1,10 @@
 <resources>
     <string name="app_name">prj1</string>
+
     <string name="action_about_me">درباره ی ما</string>
     <string name="dialog_title">درباره ی ما</string>
     <string name="dialog_content">شمیم کریمی 91106235</string>
+
+    <string name="save_game">ذخیره ی بازی</string>
+    <string name="new_game">بازی جدید</string>
 </resources>

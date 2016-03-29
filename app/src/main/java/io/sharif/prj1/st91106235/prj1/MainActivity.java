@@ -1,25 +1,36 @@
 package io.sharif.prj1.st91106235.prj1;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 
 public class MainActivity extends Activity {
 
     ImageButton upButton, downButton, leftButton, rightButton;
     ImageView golangPlayer;
+    FrameLayout gameBoardLayout;
+    ImageButton gameMenuButton;
 
-    static int STEP = 50;
+    static int STEP = 100;
 
+    Animation shake;
+
+    public static final String GAME_PREFERENCES = "GamePreferences";
+    SharedPreferences sharedpreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,8 +47,20 @@ public class MainActivity extends Activity {
 
         golangPlayer = (ImageView) findViewById(R.id.golang_player);
 
+        gameBoardLayout = (FrameLayout) findViewById(R.id.game_board);
+
+        shake = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.shake);
+
         setArrowFunctions();
 
+        gameMenuButton = (ImageButton) findViewById(R.id.game_menu);
+
+        createGameMenu();
+
+
+        sharedpreferences = getSharedPreferences(GAME_PREFERENCES, Context.MODE_PRIVATE);
+
+        loadPlayerPosition();
 
     }
 
@@ -96,6 +119,16 @@ public class MainActivity extends Activity {
                 return;
             }
 
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) golangPlayer.getLayoutParams();
+            int leftTarget = params.leftMargin + 2 * left;
+            int topTarget = params.topMargin + 2 * top;
+
+            if (leftTarget < -gameBoardLayout.getWidth() / 2 || leftTarget > gameBoardLayout.getWidth() / 2
+                    || topTarget < -gameBoardLayout.getHeight() / 2 || topTarget > gameBoardLayout.getHeight() / 2) {
+                golangPlayer.startAnimation(shake);
+                return;
+            }
+
             TranslateAnimation animation = new TranslateAnimation(0, left, 0, top);
             animation.setDuration(500);
             animation.setFillAfter(true);
@@ -123,6 +156,67 @@ public class MainActivity extends Activity {
 
             golangPlayer.startAnimation(animation);
         }
+    }
+
+    void createGameMenu() {
+
+        gameMenuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                PopupMenu popupMenu = new PopupMenu(getApplicationContext(), view);
+                popupMenu.getMenuInflater().inflate(R.menu.game_menu, popupMenu.getMenu());
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+
+                        switch (menuItem.getItemId()) {
+                            case (R.id.save_game):
+                                saveGame();
+                                break;
+
+                            case (R.id.new_game):
+                                newGame();
+                                break;
+                        }
+
+                        return false;
+                    }
+                });
+
+                popupMenu.show();
+
+            }
+        });
+
+    }
+
+    void loadPlayerPosition() {
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) golangPlayer.getLayoutParams();
+        params.leftMargin = sharedpreferences.getInt("left", 0);
+        params.topMargin = sharedpreferences.getInt("top", 0);
+        golangPlayer.setLayoutParams(params);
+    }
+
+    void saveGame() {
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) golangPlayer.getLayoutParams();
+        int left = params.leftMargin;
+        int top = params.topMargin;
+
+        SharedPreferences.Editor editor = sharedpreferences.edit();
+        editor.putInt("left", left);
+        editor.putInt("top", top);
+        editor.apply();
+    }
+
+    void newGame() {
+        FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) golangPlayer.getLayoutParams();
+        params.leftMargin = 0;
+        params.topMargin = 0;
+        golangPlayer.setLayoutParams(params);
+
+        saveGame();
     }
 
 }
