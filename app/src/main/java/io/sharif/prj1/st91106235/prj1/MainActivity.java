@@ -3,11 +3,23 @@ package io.sharif.prj1.st91106235.prj1;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.Shader;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.TextPaint;
+import android.text.style.CharacterStyle;
+import android.text.style.UpdateAppearance;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LinearInterpolator;
@@ -17,6 +29,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -217,6 +231,45 @@ public class MainActivity extends Activity {
         golangPlayer.setLayoutParams(params);
 
         saveGame();
+        showCustomToast();
+    }
+
+    void showCustomToast() {
+        LayoutInflater inflater = getLayoutInflater();
+
+        View layout = inflater.inflate(R.layout.custom_toast, (ViewGroup) findViewById(R.id.custom_toast_layout_id));
+
+        TextView toastTextView = (TextView) layout.findViewById(R.id.text_view);
+
+        String text = toastTextView.getText().toString();
+
+        SpannableString spannableString = new SpannableString(text);
+        spannableString.setSpan(new RainbowSpan(), 0, text.length(), 0);
+
+        toastTextView.setText(spannableString);
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
+    }
+
+    class RainbowSpan extends CharacterStyle implements UpdateAppearance {
+
+        private final int[] colors = {Color.MAGENTA, Color.BLUE, Color.GREEN, Color.YELLOW, Color.RED};
+
+        @Override
+        public void updateDrawState(TextPaint textPaint) {
+
+            textPaint.setStyle(Paint.Style.FILL);
+            Shader shader = new LinearGradient(0, 0, 0, textPaint.getTextSize() * colors.length,
+                    colors, null, Shader.TileMode.MIRROR);
+            Matrix matrix = new Matrix();
+            matrix.setRotate(90);
+            shader.setLocalMatrix(matrix);
+            textPaint.setShader(shader);
+
+        }
     }
 
 }
